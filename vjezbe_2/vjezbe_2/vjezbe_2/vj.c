@@ -11,121 +11,123 @@ C. dinamièki dodaje novi element na kraj liste,
 D. pronalazi element u listi (po prezimenu),
 E. briše odreðeni element iz liste,
 U zadatku se ne smiju koristiti globalne varijable.
-*/
-typedef struct osoba Osoba;
-typedef Osoba* Pozicija;
 
-struct osoba {
-    char ime[50];
-    char prezime[50];
-    int godina_rodenja;
-    Pozicija pozicija;
+*/
+typedef struct person Person;
+typedef Person* Position;
+
+struct person {
+    char name[50];
+    char surname[50];
+    int birth_year;
+    Position position;
 };
 
-void dodaj_na_pocetak(Pozicija head);
-int ispis_liste(Pozicija head);
-void dodaj_na_kraj(Pozicija head);
-void pronadi_prezime(Pozicija head);
-void izbrisi_element(Pozicija head);
+void add_first(Position head);
+int print_list(Position temp);
+void add_last(Position last);
+void find_surname(Position temp);
+void delete_element(Position temp);
 
 
 int main() {
 
-    Osoba head = { .ime = {0}, .prezime = {0}, .godina_rodenja = {0} };
+    Person head = { .name = {0}, .surname = {0}, .birth_year = {0} , .position = {NULL} };
 
-    dodaj_na_pocetak(&head);
-    dodaj_na_pocetak(&head);
-    dodaj_na_kraj(&head);
-    ispis_liste(&head);
-    pronadi_prezime(&head);
-    izbrisi_element(&head);
-    ispis_liste(&head);
+    add_first(&head);
+    add_first(&head);
+    add_last(&head);
+    print_list(&head);
+    find_surname(&head);
+    delete_element(&head);
+    print_list(&head);
 
 
     return 0;
 };
 
-void dodaj_na_pocetak(Pozicija head) {
-    Pozicija novi;
-    novi = (Pozicija)malloc(sizeof(Osoba));
+void add_first(Position head) {
+    Position new_element;
+    new_element = (Position)malloc(sizeof(Person));
+    printf("----DODAVANJE ELEMENTA NA POÈETAK LISTE----\n");
+    new_element->position = head->position;
+    printf("insert name:");
+    scanf("%s", new_element->name);
+    printf("insert surname:");
+    scanf("%s", new_element->surname);
+    printf("insert godinu rodenja:");
+    scanf("%d", &new_element->birth_year);
 
-    novi->pozicija = head->pozicija;
-    printf("Unesite ime:");
-    scanf("%s", novi->ime);
-    printf("Unesite prezime:");
-    scanf("%s", novi->prezime);
-    printf("Unesite godinu rodenja:");
-    scanf("%d", &novi->godina_rodenja);
-
-    head->pozicija = novi;
+    head->position = new_element;
 }
-int ispis_liste(Pozicija head) {
-    Pozicija temp = head;
-
+int print_list(Position temp) {
+    printf("-----ISPIS LISTE-----\n");
     while (1) {
-        temp = temp->pozicija;
-        printf("ime: %s\nprezime: %s\nGodina rodenja: %d\n", temp->ime, temp->prezime, temp->godina_rodenja);
-        if (temp->pozicija == NULL) {
+        temp = temp->position;
+        printf("Name: %s\nSurname: %s\nYear of birth: %d\n", temp->name, temp->surname, temp->birth_year);
+        if (temp->position == NULL) {
             return 0;
         }
     }
 
 }
-void dodaj_na_kraj(Pozicija head) {
-    Pozicija zadnji = head;
-
-    while (zadnji->pozicija != NULL) {
-        zadnji = zadnji->pozicija;
+void add_last(Position last) {
+    printf("----DODAVANJE ELEMENTA NA KRAJ LISTE----\n");
+    while (last->position != NULL) {
+        last = last->position;
     }
-    Pozicija novi;
-    novi = (Pozicija)malloc(sizeof(Osoba));
+    Position new_element;
+    new_element = (Position)malloc(sizeof(Person));
 
-    novi->pozicija = zadnji->pozicija;
-    printf("Unesite ime:");
-    scanf("%s", novi->ime);
-    printf("Unesite prezime:");
-    scanf("%s", novi->prezime);
-    printf("Unesite godinu rodenja:");
-    scanf("%d", &novi->godina_rodenja);
-    zadnji->pozicija = novi;
+    new_element->position = last->position;
+    printf("Insert name:");
+    scanf("%s", new_element->name);
+    printf("Insert surname:");
+    scanf("%s", new_element->surname);
+    printf("Insert birth year:");
+    scanf("%d", &new_element->birth_year);
+    last->position = new_element;
 
 }
-void pronadi_prezime(Pozicija head) {
-    Pozicija temp = head;
-    printf("Unesite traženo prezime:");
-    char trazi[50];
-    scanf("%s", trazi);
+void find_surname(Position temp) {
+    
+    printf("\nInsert surname you want to find:");
+    char wanted[50];
+    scanf("%s", wanted);
 
-    while (temp->pozicija != NULL) {
-        temp = temp->pozicija;
-        if (strcmp(temp->prezime, trazi) == 0) {
+    while (temp->position != NULL) {
+        temp = temp->position;
+        if (strcmp(temp->surname, wanted) == 0) {
+            printf("Wanted element\nName: %s\nSurname: %s\nBirth year: %d\n", temp->name, temp->surname, temp->birth_year);
             break;
         }
+        else if (temp->position == NULL) {
+            printf("Element not found!\n");
+        }
     }
-    printf("ime: %s\nprezime: %s\nGodina rodenja: %d\n", temp->ime, temp->prezime, temp->godina_rodenja);
 }
-void izbrisi_element(Pozicija head) {
-    Pozicija temp = head;
-    Pozicija prethodni = head;
-    Pozicija trazeni = head;
-    printf("Unesite traženo ime:");
-    scanf("%s", trazeni->ime);
-    printf("Unesite traženo prezime:");
-    scanf("%s", trazeni->prezime);
-    printf("Unesite traženu godinu:");
-    scanf("%d", &trazeni->godina_rodenja);
-    while (temp->pozicija != NULL) {
-        temp = temp->pozicija;
-        if (strcmp(temp->prezime, trazeni->prezime) == 0 && strcmp(temp->ime, trazeni->ime) == 0 && temp->godina_rodenja == trazeni->godina_rodenja) {
+void delete_element(Position temp) {
+    Position previous = temp;
+    Position wanted = temp;
+    printf("-----DELETING WANTED ELEMENT-----\n");
+    printf("Insert wanted name:");
+    scanf("%s", wanted->name);
+    printf("Insert wanted surname:");
+    scanf("%s", wanted->surname);
+    printf("Insert wanted year:");
+    scanf("%d", &wanted->birth_year);
+    while (temp->position != NULL) {
+        temp = temp->position;
+        if (strcmp(temp->surname, wanted->surname) == 0 && strcmp(temp->name, wanted->name) == 0 && temp->birth_year == wanted->birth_year) {
             break;
         }
-        prethodni = prethodni->pozicija;
+        previous = previous->position;
     }
-    if (temp->pozicija != NULL) {
-        prethodni->pozicija = temp->pozicija;
+    if (previous->position != NULL) {
+        previous->position = temp->position;
         free(temp);
     }
     else {
-        printf("Element not found.\n");
+        printf("Element not found!\n");
     }
 }
